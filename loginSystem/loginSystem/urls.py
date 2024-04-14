@@ -20,10 +20,10 @@ from myapp import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # path('', 'myapp.urls'),
-    # path('', views.register, name='register'),
-    path('login/', views.login, name='login'),
-    path('logout/', views.logout, name='logout'),
+    path('login/', views.loginPage, name='loginPage'),  # Change this line
+    path('logout/', views.logoutUser, name='logout'),  # Change this line
     path('', views.register, name='register'),
     path('home/', views.home, name='home')
+    
+    
 ]

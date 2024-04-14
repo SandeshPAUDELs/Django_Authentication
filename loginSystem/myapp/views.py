@@ -1,59 +1,73 @@
+# from django.shortcuts import render, HttpResponse, redirect
+# from django.contrib.auth.models import User
+# from django.contrib.auth import authenticate, login, logout
+# from django.contrib.auth.decorators import login_required
+
+
+# # Create your views here.
+
+# @login_required(login_url='login')
+# def home(request):
+#     return render(request, 'homePage.html')
+
+from django.contrib import messages
 from django.shortcuts import render, HttpResponse, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 
-
-# Create your views here.
-
-@login_required(login_url='login')
+@login_required(login_url='loginPage')
 def home(request):
     return render(request, 'homePage.html')
 
+
 def register(request):
     if request.method == 'POST':
-        username = request.POST['username']
-        email = request.POST['email']
-        password1 = request.POST['password1']
-        password2 = request.POST['password2']
-        print(username, email, password1, password2)
-        if password1 == password2:
-            if User.objects.filter(username=username).exists():
-                print("Username already taken")
-                return render(request, 'register.html')
-            elif User.objects.filter(email=email).exists():
-                print("Email already taken")
-                return render(request, 'register.html')
-            else:
-                user = User.objects.create_user(username=username, email=email, password=password1)
-                user.save()
-                print("User Created")
-                return render(request, 'loginPage.html')
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password1 = request.POST.get('password1')
+        password2 = request.POST.get('password2')
+
+        if not email:
+            messages.error(request, 'Email is required')
+            return redirect('register')
+
+        if password1 != password2:
+            messages.error(request, 'Passwords do not match')
+            return redirect('register')
+
+        if User.objects.filter(username=username).exists():
+            messages.error(request, 'Username already exists')
+            return redirect('register')
         else:
-            print("Password not matched")
-            return render(request, 'register.html')
+            user = User.objects.create_user(username=username, email=email, password=password1)
+            user.save()
+            messages.success(request, 'Account created successfully')
+            user = authenticate(username=username, password=password1)
+            if user is not None:
+                login(request, user)
+            return redirect('home')
+
     else:
         return render(request, 'register.html')
     
 def loginPage(request):
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        print(username, password)
-        user = authenticate(username=username, password=password)
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+
         if user is not None:
             login(request, user)
             return redirect('home')
         else:
-            print("User with thid Email and passwprd  not found")
-            return render(request, 'loginPage.html')
-    else:
-        return render(request, 'loginPage.html')
+            messages.error(request, 'Username OR password is incorrect')
 
-
-
+    return render(request, 'loginPage.html')
 
     
 def logoutUser(request):
     logout(request)
     return redirect('login')
+
+

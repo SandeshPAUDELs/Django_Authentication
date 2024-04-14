@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Design by foolishdeveloper.com -->
     <title>Login Page</title>
  
     <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -11,22 +10,26 @@
 </head>
 <body>
    
-    <form method="post">
-        <h3>Login Here</h3>
-        {% csrf_token %} 
-        <label for="username">Username</label>
-        <input type="text" placeholder="Enter Username" id="username" name="username">
+  <form method="post">
+    {% csrf_token %} 
+    <h3>Login Here</h3>
 
-        <label for="password">Password</label>
-        <input type="password" placeholder="Password" id="password" name="pass">
+    <label for="username">Username</label>
+    <input type="text" placeholder="Enter Username" id="username" name="username" required>
 
-        <button type="submit">Log In</button>
-        <!-- <input type="button" value=""> -->
-        <!-- <div class="social">
-          <div class="go"><i class="fab fa-google"></i>  Google</div>
-          <div class="fb"><i class="fab fa-facebook"></i>  Facebook</div>
-        </div> -->
-        <a href="{% url 'register' %}" >Create a account</a>
-    </form>
+    <label for="password">Password</label>
+    <input type="password" placeholder="Password" id="password" name="password" required>
+
+    <button type="submit">Log In</button>
+    {% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+    <a href="{% url 'register' %}">Create an account</a>
+    <a href="{% url 'password_reset' %}">Forgot password?</a>
+</form>
 </body>
 </html>
