@@ -1,35 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <title>Login Page</title>
- 
+
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
 
 </head>
+
 <body>
-   
-  <form method="post">
-    {% csrf_token %} 
-    <h3>Login Here</h3>
 
-    <label for="username">Username</label>
-    <input type="text" placeholder="Enter Username" id="username" name="username" required>
+    <form method="post">
+        {% csrf_token %}
+        <h3>Login Here</h3>
 
-    <label for="password">Password</label>
-    <input type="password" placeholder="Password" id="password" name="password" required>
+        <label for="username">Username</label>
+        <input type="text" placeholder="Enter Username" id="username" name="username" required>
 
-    <button type="submit">Log In</button>
-    {% if messages %}
-    {% for message in messages %}
+        <label for="password">Password</label>
+        <input type="password" placeholder="Password" id="password" name="password" required>
+
+        <button type="submit">Log In</button>
+        {% if messages %}
+        {% for message in messages %}
         <div class="alert alert-{{ message.tags }}">
             {{ message }}
         </div>
-    {% endfor %}
-{% endif %}
-    <a href="{% url 'register' %}">Create an account</a>
-    <a href="{% url 'password_reset' %}">Forgot password?</a>
-</form>
+        {% endfor %}
+        {% endif %}
+        <a href="{% url 'register' %}">Create an account</a>
+        <a href="{% url 'send_otp' %}">Forgot password?</a>
+    </form>
 </body>
+
 </html>

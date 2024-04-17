@@ -1,20 +1,15 @@
-# from django.shortcuts import render, HttpResponse, redirect
-# from django.contrib.auth.models import User
-# from django.contrib.auth import authenticate, login, logout
-# from django.contrib.auth.decorators import login_required
 
-
-# # Create your views here.
-
-# @login_required(login_url='login')
-# def home(request):
-#     return render(request, 'homePage.html')
 
 from django.contrib import messages
 from django.shortcuts import render, HttpResponse, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.core.mail import send_mail
+import random
+from django.conf import settings
+from django.core.mail import send_mail
+
 
 @login_required(login_url='loginPage')
 def home(request):
@@ -22,6 +17,8 @@ def home(request):
 
 
 def register(request):
+    send_mail('Subject here', 'Here is the message.', 'paudelsandesh181@gmail.com', ['sandeshpaudel017@gmail.com'], fail_silently=False,)
+
     if request.method == 'POST':
         username = request.POST.get('username')
         email = request.POST.get('email')
@@ -71,3 +68,43 @@ def logoutUser(request):
     return redirect('login')
 
 
+
+
+
+# Store OTPs in a dictionary for simplicity. In a real application, you should store this in your database.
+otps = {}
+
+
+def send_otp(request):
+    if request.method == 'POST':
+        email = request.POST['email']
+        if User.objects.filter(email=email).exists():
+            otp = random.randint(100000, 999999)
+            otps[email] = otp
+            send_mail('Your OTP', f'Your OTP is {otp}', 'paudelsandesh181@gmail.com', [email], fail_silently=False,)
+            print(f'OTP sent to {email}: {otp}')  # Print OTP in terminal
+            return redirect('verify_otp')
+        else:
+            messages.error(request, 'Email not found')
+    return render(request, 'send_otp.html')
+
+def verify_otp(request):
+    if request.method == 'POST':
+        email = request.POST['email']
+        otp = request.POST['otp']
+        if otps.get(email) == int(otp):
+            return redirect('password_reset')
+        else:
+            messages.error(request, 'Invalid OTP')
+    return render(request, 'verify_otp.html')
+
+def password_reset(request):
+    if request.method == 'POST':
+        email = request.POST['email']
+        password = request.POST['password']
+        user = User.objects.get(email=email)
+        user.set_password(password)
+        user.save()
+        messages.success(request, 'Password reset successful')
+        return redirect('home')
+    return render(request, 'password_reset.html')

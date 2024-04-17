@@ -20,10 +20,12 @@ from myapp import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('login/', views.loginPage, name='loginPage'),  # Change this line
-    path('logout/', views.logoutUser, name='logout'),  # Change this line
+    path('login/', views.loginPage, name='loginPage'),  
+    path('logout/', views.logoutUser, name='logout'),  
     path('', views.register, name='register'),
-    path('home/', views.home, name='home')
-    
+    path('home/', views.home, name='home'),
+    path('send-otp/', views.send_otp, name='send_otp'),
+    path('verify-otp/', views.verify_otp, name='verify_otp'),
+    path('password-reset/', views.password_reset, name='password_reset'),
     
 ]
